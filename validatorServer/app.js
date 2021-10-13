@@ -15,7 +15,7 @@ const urlUpdate = "https://get.dgc.gov.it/v1/dgc/signercertificate/update";
 const urlStatus = "https://get.dgc.gov.it/v1/dgc/signercertificate/status";
 const urlSettings = "https://get.dgc.gov.it/v1/dgc/settings";
 
-const ADD_HOLDER_DETAILS = false;
+const ADD_HOLDER_DETAILS = true;
 
 let validKids;
 let signerCertificates;
@@ -166,12 +166,12 @@ const main = (async () => {
 				let surname = dcc.payload.nam.fn;
 				let forename = dcc.payload.nam.gn;
 				let dob = dcc.payload.dob;
-				response = validate.message + " - " + surname + " " + forename + " (" + dob + ")";
+				response = "{ \"message\": \"" + validate.message + "\", \"surename\": \"" + surname + "\", \"forename\": \"" + forename + "\", \"dob\": \"" + dob + "\"}";
 			} else response = validate.message;
 						
 			if(validate.result) res.statusCode = 200;
 			else res.statusCode = 400;
-			res.setHeader('Content-Type', 'text/plain');
+			res.setHeader('Content-Type', 'application/json');
 			res.end(response);				
 		}
 	});

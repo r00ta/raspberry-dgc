@@ -11,6 +11,7 @@ from PIL import Image
 import threading
 import tkinter as tk 
 import time 
+import json 
 
 def update_thread(window):
     # Initialise Raspberry Pi camera
@@ -49,9 +50,10 @@ def update_thread(window):
 
             payload = {'dgc': codes[0]}
             r = requests.get('http://localhost:3000/', params=payload)
+            data = json.loads(r.text)
             print('Return code: ', r.status_code, ', Text: ', r.text)
             if r.status_code == 200:
-                window.green()
+                window.green(data["surename"], data["forename"])
                 time.sleep(10)
             else:
                 window.red()
@@ -70,20 +72,9 @@ def update_thread(window):
         if keypress == ord('q'):
             break
 
-# When everything is done, release the capture
-camera.close()
-cv2.destroyAllWindows()
-
-    i = 0
-    while True:
-        if i % 3 == 0:
-            window.green()
-        if i % 3 == 1:
-            window.red()
-        if i % 3 == 2: 
-            window.new()
-        time.sleep(1)
-        i += 1
+    # When everything is done, release the capture
+    camera.close()
+    cv2.destroyAllWindows()
 
 class GreenPassWindow:
     def __init__(self):
@@ -97,8 +88,8 @@ class GreenPassWindow:
     def start(self):
         self.root.mainloop()
 
-    def green(self):
-        self.label.config(text = "Certificato Valido")
+    def green(self, surename, forename):
+        self.label.config(text = "Certificato Valido - {}  {}".format(surename, forename))
         self.label.config(bg = "green")
 
     def red(self):
